@@ -7,7 +7,7 @@ Installation
 ------------
 
 This tool isn't very robust yet; clone the repository, install the
-dependencies, and save into the folder it is run for best results.
+dependencies, and backup into the folder you cloned it for best results.
 
 Make sure you have Python 2.6 or 2.7 (it is 2to3 compatible but I've not
 yet tested it), argparse (included with 2.7), dateutil, lxml, and requests.
@@ -34,6 +34,40 @@ to continually add new entries to your backup).
 
 This tool can cause a lot of server load. Please use it during off-peak
 times, and use it responsibly.
+
+Known Issues
+------------
+
+### Unicode problems
+
+This tool works on Ubuntu 9.10. However, when I run it on identical (as far
+as I can tell) Debian testing system, I get a Python Unicode error:
+
+ Traceback (most recent call last):
+   File "Identica-Backup.py", line 157, in <module>
+     main()
+   File "Identica-Backup.py", line 120, in main
+     document = etree.fromstring(raw_document)
+   File "lxml.etree.pyx", line 2743, in lxml.etree.fromstring (src/lxml/lxml.etree.c:52665)
+   File "parser.pxi", line 1564, in lxml.etree._parseMemoryDocument (src/lxml/lxml.etree.c:79843)
+ ValueError: Unicode strings with encoding declaration are not supported.
+
+The error is from lxml: it is claiming that a document it attempts to parse
+(from Identi.ca/your StatusNet installation) says it is not Unicode—when it
+is! Again, the same thing works on Ubuntu, and I've no idea how to fix this.
+If you've an idea how to FIX it (i.e. I don't want your it's-MY-fault-
+Unicode-is-a-headache-in-Python lecture), please let me know.
+
+### Incomplete backups
+
+The first time you run this tool, it'll attempt to backup your entire stream.
+
+But what if something happens before it finishes? At the moment, the tool
+does not resume, and you have to handle the situation manually. When it
+fails, take note of the last page number processed. Then, run with --page
+and --force to start downloading from that page again. E.g.:
+
+ $ StatusNet-Backup.py --username billgates --page 43 --force
 
 Details
 -------
