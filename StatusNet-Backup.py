@@ -94,13 +94,14 @@ class StatusNet(object):
 def main():
     parser = argparse.ArgumentParser(description='Backup your Identi.ca account')
     parser.add_argument('--username', required=True)
+    parser.add_argument('--endpoint', default='http://identi.ca')
     parser.add_argument('--stream', choices=['user_timeline', 'friends_timeline'], default='user_timeline')
     parser.add_argument('--page', type=int, default=1, help='Page number from which to start backup')
     parser.add_argument('--force', type=bool, default=False)
 
     config = parser.parse_args()
 
-    sn = StatusNet(config.username)
+    sn = StatusNet(config.username, config.endpoint)
     format = 'atom' # Hard-coded for now
     skippedEntries = 0
 
