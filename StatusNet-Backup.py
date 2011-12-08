@@ -121,6 +121,9 @@ def main():
             continue
         
         if format == 'atom':
+            # Fix for: ValueError: Unicode strings with encoding declaration are not supported
+            # Dear lxml and Python: go die in a fire w/ your Unicode idiocy, thanks
+            raw_document = raw_document.encode('utf-8')
             document = etree.fromstring(raw_document)
         elif format == 'as':
             document = json.loads(raw_document)
