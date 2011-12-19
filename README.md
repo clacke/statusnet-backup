@@ -1,5 +1,5 @@
-StatusNet Stream Backup
-=======================
+StatusNet Timelines Backup
+==========================
 
 Backs up StatusNet 1.0 streams in Activity Streams Atom format.
 
@@ -26,7 +26,7 @@ to backup your entire "user timeline" (your own notices) into a directory
 called "user_timeline". If you want to backup your "friends timeline"
 (the notices of those you subscribe to), run:
 
- $ StatusNet-Backup.py --username billgates --stream friends_timeline
+ $ StatusNet-Backup.py --username billgates --timeline friends_timeline
 
 This tool will start at page 1, and go as far back as possible until it
 encounters an entry it's seen before (e.g. you can add the above to cron
@@ -60,7 +60,7 @@ Unicode-is-a-headache-in-Python lecture), please let me know.
 
 ### Incomplete backups
 
-The first time you run this tool, it'll attempt to backup your entire stream.
+The first time you run this tool, it'll attempt to backup your entire timeline.
 
 But what if something happens before it finishes? At the moment, the tool
 does not resume, and you have to handle the situation manually. When it
@@ -72,7 +72,7 @@ and --force to start downloading from that page again. E.g.:
 Details
 -------
 
-This tool saves streams in [Activity Streams Atom format][as-atom] as is
+This tool saves timelines in [Activity Streams Atom format][as-atom] as is
 made available from StatusNet 1.0 or later.
 
   [as-atom]: http://activitystrea.ms/specs/atom/1.0/

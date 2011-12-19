@@ -95,7 +95,7 @@ def main():
     parser = argparse.ArgumentParser(description='Backup your Identi.ca account')
     parser.add_argument('--username', required=True)
     parser.add_argument('--endpoint', default='http://identi.ca')
-    parser.add_argument('--stream', choices=['user_timeline', 'friends_timeline'], default='user_timeline')
+    parser.add_argument('--timeline', choices=['user_timeline', 'friends_timeline'], default='user_timeline')
     parser.add_argument('--page', type=int, default=1, help='Page number from which to start backup')
     parser.add_argument('--force', type=bool, default=False)
 
@@ -107,14 +107,14 @@ def main():
 
     # Create output directory
     try:
-        os.makedirs(config.stream)
+        os.makedirs(config.timeline)
     except Exception:
         pass
-    os.chdir(config.stream)
+    os.chdir(config.timeline)
 
     for pageNo in range(config.page, 300):
         print('Processing page %d' % pageNo)
-        raw_document = sn.fetch(config.stream, pageNo, format=format)
+        raw_document = sn.fetch(config.timeline, pageNo, format=format)
 
         if raw_document is None:
             print('Error loading, skipping page', file=sys.stderr)
