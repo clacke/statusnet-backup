@@ -20,9 +20,11 @@ class StatusNet(object):
     timeline_url = None
 
     headers = {'user-agent': 'StatusNet 1.0 Backup'}
+    stream_types = ('friends_timeline', 'user_timeline', 'favorites', 'memberships', 'subscriptions')
 
     namespaces = {
         'activity': 'http://activitystrea.ms/spec/1.0/',
+        'app': 'http://www.w3.org/2007/app',
         'atom': 'http://www.w3.org/2005/Atom'
     }
 
@@ -38,11 +40,7 @@ class StatusNet(object):
 
         self.rs = requests.session(headers=self.headers)
 
-
-    def getUserTimelineUrl(self):
-        if 'user_timeline' in self.urls:
-            return self.urls['user_timeline']
-
+    def _cacheTimelineUrls(self):
         # Request service document
         service_doc_url = '%s/api/statusnet/app/service/%s.xml' % (self.endpoint, self.user_name)
         response = self.rs.get(service_doc_url)
@@ -52,33 +50,37 @@ class StatusNet(object):
 
         document = etree.fromstring(response.content)
         
-        r = document.xpath('//atom:title[contains(.,"timeline")]/../@href', namespaces=self.namespaces)
-        if r:
-            url = r[0]
-        else:
+        streams = document.xpath('//app:collection[@href]', namespaces=self.namespaces)
+        if not streams:
             return None
 
-        self.urls['user_timeline'] = url
-        return url
+        # TODO: figure out a smarter way to write this
+        urls = {}
+        for s in streams:
+            url = s.get('href')
+            for t in self.stream_types:
+                if t in url:
+                    urls[t] = url
+                continue
 
-
-    def getFriendsTimelineUrl(self):
-        if 'friends_timeline' in self.urls:
-            return self.urls['friends_timeline']
-
+        # HACK: Don't know how to discover this—hard-coded for now
         url = '%s/api/statuses/friends_timeline/%s.atom' % (self.endpoint, self.user_name)
+        urls['friends_timeline'] = url
 
-        self.urls['friends_timeline'] = url
-        return url
+        self.urls = urls
+        return urls
 
+    def getTimelineUrl(self, timeline):
+        if timeline in self.urls:
+            return self.urls[timeline]
+
+        urls = self._cacheTimelineUrls()
+
+        if timeline in urls:
+            return urls[timeline]
 
     def fetch(self, timeline, pageNo, format='atom'):
-        if timeline == 'user_timeline':
-            url = self.getUserTimelineUrl()
-        elif timeline == 'friends_timeline':
-            url = self.getFriendsTimelineUrl()
-
-        url = url + '?page=%d' % pageNo
+        url = self.getTimelineUrl(timeline) + '?page=%d' % pageNo
 
         if format in ('as', 'json'):
             url = url.replace('.atom', '.as')
@@ -95,7 +97,7 @@ def main():
     parser = argparse.ArgumentParser(description='Backup your Identi.ca account')
     parser.add_argument('--username', required=True)
     parser.add_argument('--endpoint', default='http://identi.ca')
-    parser.add_argument('--timeline', choices=['user_timeline', 'friends_timeline'], default='user_timeline')
+    parser.add_argument('--timeline', choices=StatusNet.stream_types, default='user_timeline')
     parser.add_argument('--page', type=int, default=1, help='Page number from which to start backup')
     parser.add_argument('--force', type=bool, default=False)
 
