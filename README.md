@@ -38,6 +38,8 @@ times, and use it responsibly.
 Known Issues
 ------------
 
+Also see the TODO file for those known issues/bugs that don't have a longer explanation.
+
 ### Unicode problems
 
 This tool works on Ubuntu 9.10. However, when I run it on identical (as far
