@@ -96,10 +96,10 @@ class StatusNet(object):
 def main():
     parser = argparse.ArgumentParser(description='Backup your Identi.ca account')
     parser.add_argument('--username', required=True)
-    parser.add_argument('--endpoint', default='http://identi.ca')
+    parser.add_argument('--endpoint', default='http://identi.ca', help='(default: %(default)s)')
     parser.add_argument('--timeline', choices=StatusNet.stream_types, default='user_timeline')
     parser.add_argument('--page', type=int, default=1, help='Page number from which to start backup')
-    parser.add_argument('--force', type=bool, default=False)
+    parser.add_argument('--force', action='store_true', default=False, help='Force overwrite, ignoring previously backed-up entries')
 
     config = parser.parse_args()
 
