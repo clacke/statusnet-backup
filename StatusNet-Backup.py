@@ -153,7 +153,7 @@ def main():
                 print('Skipping %s' % filename, file=sys.stderr)
                 # this should be return to stop, continue to skip current entry
                 # return
-                if skippedEntries > 2:
+                if skippedEntries > 16:
                     return
                 skippedEntries = skippedEntries + 1
                 continue
