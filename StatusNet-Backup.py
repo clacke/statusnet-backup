@@ -114,13 +114,14 @@ def main():
         pass
     os.chdir(config.timeline)
 
-    for pageNo in range(config.page, 300):
+    for pageNo in range(config.page, 500):
         print('Processing page %d' % pageNo)
         raw_document = sn.fetch(config.timeline, pageNo, format=format)
 
         if raw_document is None:
             print('Error loading, skipping page', file=sys.stderr)
-            continue
+            #continue
+            return
         
         if format == 'atom':
             # Fix for: ValueError: Unicode strings with encoding declaration are not supported
