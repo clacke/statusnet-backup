@@ -38,7 +38,7 @@ class StatusNet(object):
             % (self.headers['user-agent'], endpoint, user_name)
         self.headers['user-agent'] = user_agent
 
-        self.rs = requests.session(headers=self.headers)
+        self.rs = requests.session(headers=self.headers, config={'max_retries': 2})
 
     def _cacheTimelineUrls(self):
         # Request service document
@@ -85,6 +85,7 @@ class StatusNet(object):
         if format in ('as', 'json'):
             url = url.replace('.atom', '.as')
 
+        print('Getting %s' % url)
         response = self.rs.get(url)
 
         if response.status_code != requests.codes.ok:
@@ -119,9 +120,7 @@ def main():
         raw_document = sn.fetch(config.timeline, pageNo, format=format)
 
         if raw_document is None:
-            print('Error loading, skipping page', file=sys.stderr)
-            #continue
-            return
+            exit('Error loading page %d' % pageNo)
         
         if format == 'atom':
             # Fix for: ValueError: Unicode strings with encoding declaration are not supported
