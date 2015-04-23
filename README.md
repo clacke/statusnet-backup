@@ -3,6 +3,8 @@ StatusNet Timelines Backup
 
 Backs up StatusNet 1.0 streams in Activity Streams Atom format.
 
+Since I wrote this tool in 2012, StatusNet has become [GNU Social](https://gnu.io/social/). This tool should also work with GNU Social but I have not explicitly tested it myself.
+
 Installation
 ------------
 
